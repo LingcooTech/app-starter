@@ -13,6 +13,11 @@ set -eu
 DEPLOY_COMPOSE_FILE="${DEPLOY_COMPOSE_FILE:-docker-compose.prod.yml}"
 DEPLOY_HEALTHCHECK_URL="${DEPLOY_HEALTHCHECK_URL:-https://frame.lingcoo.com/health/ready}"
 LEGACY_PATH="${LEGACY_PATH:-/opt/lingcoo-system-base-framework}"
+DEPLOY_GIT_KEY="${DEPLOY_GIT_KEY:-/root/.ssh/id_ed25519_lingcoo_app_starter}"
+
+test -f "${DEPLOY_GIT_KEY}" || { echo "${DEPLOY_GIT_KEY} is required"; exit 1; }
+GIT_SSH_COMMAND="ssh -i ${DEPLOY_GIT_KEY} -o IdentitiesOnly=yes"
+export GIT_SSH_COMMAND
 
 if [ ! -d "${DEPLOY_PATH}/.git" ]; then
   install -d -m 755 "$(dirname "${DEPLOY_PATH}")"
