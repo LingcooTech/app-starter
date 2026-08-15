@@ -34,7 +34,6 @@ jobs:
     timeout-minutes: 30
     outputs:
       image_tag: ${{ steps.vars.outputs.image_tag }}
-      acr_image: ${{ steps.vars.outputs.acr_image }}
 
     steps:
       - name: Checkout
@@ -47,9 +46,7 @@ jobs:
         shell: bash
         run: |
           image_tag="${{ github.event.workflow_run.head_sha || github.sha }}"
-          acr_image="${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_NAMESPACE }}/${{ env.IMAGE_NAME }}"
           echo "image_tag=${image_tag}" >> "$GITHUB_OUTPUT"
-          echo "acr_image=${acr_image}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
@@ -86,8 +83,8 @@ jobs:
           build-args: |
             APP_VERSION=${{ steps.vars.outputs.image_tag }}
           tags: |
-            ${{ steps.vars.outputs.acr_image }}:latest
-            ${{ steps.vars.outputs.acr_image }}:${{ steps.vars.outputs.image_tag }}
+            ${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_NAMESPACE }}/${{ env.IMAGE_NAME }}:latest
+            ${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.image_tag }}
           labels: |
             org.opencontainers.image.revision=${{ steps.vars.outputs.image_tag }}
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
@@ -121,7 +118,7 @@ jobs:
 
       - name: Mirror ACR image to GHCR
         env:
-          ACR_IMAGE: ${{ needs.build-and-push-acr.outputs.acr_image }}
+          ACR_IMAGE: ${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_NAMESPACE }}/${{ env.IMAGE_NAME }}
           IMAGE_TAG: ${{ needs.build-and-push-acr.outputs.image_tag }}
         run: |
           docker buildx imagetools create \
@@ -169,7 +166,7 @@ jobs:
           DEPLOY_REPOSITORY: ${{ env.DEPLOY_REPOSITORY }}
           DEPLOY_USER: ${{ env.DEPLOY_USER }}
           IMAGE_TAG: ${{ needs.build-and-push-acr.outputs.image_tag }}
-          LINGCOO_APP_IMAGE: ${{ needs.build-and-push-acr.outputs.acr_image }}:${{ needs.build-and-push-acr.outputs.image_tag }}
+          LINGCOO_APP_IMAGE: ${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ needs.build-and-push-acr.outputs.image_tag }}
         run: |
           escape() { printf '%q' "$1"; }
           remote_cmd="ACR_PASSWORD=$(escape "${ACR_PASSWORD}") \
