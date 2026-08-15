@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
   injectWorkspacePackages: true
 
+overrides:
+  '@nestjs/swagger>js-yaml': 5.2.2
+
 importers:
   .:
     devDependencies:
