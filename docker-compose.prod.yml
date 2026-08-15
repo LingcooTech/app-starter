@@ -1,22 +1,20 @@
-name: lingcoo-app-starter
-
 x-runtime-environment: &runtime-environment
   NODE_ENV: production
   APP_NAME: ${APP_NAME:-lingcoo-app-starter}
   APP_VERSION: ${APP_VERSION:-development}
   API_HOST: 0.0.0.0
   API_PORT: 8090
-  CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:8080}
-  DATABASE_URL: ${DATABASE_URL:-postgres://lingcoo_app:lingcoo_app_password@postgres:5432/lingcoo_app}
+  CORS_ORIGIN: ${CORS_ORIGIN:?CORS_ORIGIN is required}
+  DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
   API_DOCS_ENABLED: ${API_DOCS_ENABLED:-false}
 
 services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-lingcoo_app}
-      POSTGRES_USER: ${POSTGRES_USER:-lingcoo_app}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lingcoo_app_password}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -26,26 +24,13 @@ services:
       retries: 12
     restart: unless-stopped
 
-  migrate:
-    image: ${LINGCOO_APP_IMAGE:-lingcoo-app-starter:local}
-    build:
-      context: .
-      args:
-        APP_VERSION: ${APP_VERSION:-development}
-    environment: *runtime-environment
-    command: ['node', 'server/dist/migrate.js']
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: 'no'
-
   api:
-    image: ${LINGCOO_APP_IMAGE:-lingcoo-app-starter:local}
+    image: ${LINGCOO_APP_IMAGE:?LINGCOO_APP_IMAGE is required}
     environment: *runtime-environment
     command: ['node', 'server/dist/main.js']
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
     expose:
       - '8090'
     healthcheck:
@@ -70,12 +55,12 @@ services:
     restart: unless-stopped
 
   worker:
-    image: ${LINGCOO_APP_IMAGE:-lingcoo-app-starter:local}
+    image: ${LINGCOO_APP_IMAGE:?LINGCOO_APP_IMAGE is required}
     environment: *runtime-environment
     command: ['node', 'server/dist/worker.js']
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
     read_only: true
     tmpfs:
       - /tmp
@@ -88,9 +73,9 @@ services:
   caddy:
     image: caddy:2-alpine
     environment:
-      CADDY_SITE_ADDRESS: ${CADDY_SITE_ADDRESS:-:80}
+      CADDY_SITE_ADDRESS: ${CADDY_SITE_ADDRESS:?CADDY_SITE_ADDRESS is required}
     ports:
-      - '${HTTP_PORT:-8080}:80'
+      - '${HTTP_PORT:?HTTP_PORT is required}:80'
     volumes:
       - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

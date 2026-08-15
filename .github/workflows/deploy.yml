@@ -1,0 +1,200 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: lingcoo-app-starter
+  GHCR_IMAGE: ghcr.io/lingcootech/lingcoo-app-starter
+  DEPLOY_HOST: 82.157.22.93
+  DEPLOY_USER: root
+  DEPLOY_PATH: /opt/lingcoo-app-starter
+  DEPLOY_HEALTHCHECK_URL: https://frame.lingcoo.com/health/ready
+  DEPLOY_REPOSITORY: git@github.com:LingcooTech/lingcoo-app-starter.git
+
+jobs:
+  build-and-push-acr:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.head_repository.full_name == github.repository
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      image_tag: ${{ steps.vars.outputs.image_tag }}
+      acr_image: ${{ steps.vars.outputs.acr_image }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30af803 # v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Prepare image variables
+        id: vars
+        shell: bash
+        run: |
+          image_tag="${{ github.event.workflow_run.head_sha || github.sha }}"
+          acr_image="${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_NAMESPACE }}/${{ env.IMAGE_NAME }}"
+          echo "image_tag=${image_tag}" >> "$GITHUB_OUTPUT"
+          echo "acr_image=${acr_image}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        with:
+          driver: docker
+
+      - name: Login to Aliyun ACR
+        shell: bash
+        env:
+          ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+          ACR_REGISTRY: ${{ secrets.ACR_REGISTRY }}
+          ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+        run: |
+          max_attempts=5
+          for attempt in $(seq 1 "${max_attempts}"); do
+            if printf '%s' "${ACR_PASSWORD}" | docker login "${ACR_REGISTRY}" \
+              --username "${ACR_USERNAME}" --password-stdin; then
+              exit 0
+            fi
+            if [ "${attempt}" -eq "${max_attempts}" ]; then
+              echo "ACR login failed after ${attempt} attempts"
+              exit 1
+            fi
+            wait_s=$((attempt * 15))
+            echo "ACR login failed (${attempt}/${max_attempts}); retrying in ${wait_s}s"
+            sleep "${wait_s}"
+          done
+
+      - name: Build and push runtime image to ACR
+        uses: docker/build-push-action@10e90c68a42422c14e847fe6c8ac0403b4cbd6f # v6
+        with:
+          context: .
+          push: true
+          build-args: |
+            APP_VERSION=${{ steps.vars.outputs.image_tag }}
+          tags: |
+            ${{ steps.vars.outputs.acr_image }}:latest
+            ${{ steps.vars.outputs.acr_image }}:${{ steps.vars.outputs.image_tag }}
+          labels: |
+            org.opencontainers.image.revision=${{ steps.vars.outputs.image_tag }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+
+  publish-ghcr:
+    needs: build-and-push-acr
+    if: ${{ needs.build-and-push-acr.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        with:
+          driver: docker
+
+      - name: Login to GHCR
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Aliyun ACR
+        shell: bash
+        env:
+          ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+          ACR_REGISTRY: ${{ secrets.ACR_REGISTRY }}
+          ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+        run: printf '%s' "${ACR_PASSWORD}" | docker login "${ACR_REGISTRY}" --username "${ACR_USERNAME}" --password-stdin
+
+      - name: Mirror ACR image to GHCR
+        env:
+          ACR_IMAGE: ${{ needs.build-and-push-acr.outputs.acr_image }}
+          IMAGE_TAG: ${{ needs.build-and-push-acr.outputs.image_tag }}
+        run: |
+          docker buildx imagetools create \
+            --tag "${GHCR_IMAGE}:latest" \
+            --tag "${GHCR_IMAGE}:${IMAGE_TAG}" \
+            "${ACR_IMAGE}:${IMAGE_TAG}"
+
+  deploy:
+    needs:
+      - build-and-push-acr
+      - publish-ghcr
+    if: ${{ needs.build-and-push-acr.result == 'success' && needs.publish-ghcr.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: production-deploy
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30af803 # v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
+
+      - name: Trust deploy host
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy to server
+        env:
+          ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
+          ACR_REGISTRY: ${{ secrets.ACR_REGISTRY }}
+          ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
+          DEPLOY_HEALTHCHECK_URL: ${{ env.DEPLOY_HEALTHCHECK_URL }}
+          DEPLOY_HOST: ${{ env.DEPLOY_HOST }}
+          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
+          DEPLOY_REPOSITORY: ${{ env.DEPLOY_REPOSITORY }}
+          DEPLOY_USER: ${{ env.DEPLOY_USER }}
+          IMAGE_TAG: ${{ needs.build-and-push-acr.outputs.image_tag }}
+          LINGCOO_APP_IMAGE: ${{ needs.build-and-push-acr.outputs.acr_image }}:${{ needs.build-and-push-acr.outputs.image_tag }}
+        run: |
+          escape() { printf '%q' "$1"; }
+          remote_cmd="ACR_PASSWORD=$(escape "${ACR_PASSWORD}") \
+            ACR_REGISTRY=$(escape "${ACR_REGISTRY}") \
+            ACR_USERNAME=$(escape "${ACR_USERNAME}") \
+            DEPLOY_HEALTHCHECK_URL=$(escape "${DEPLOY_HEALTHCHECK_URL}") \
+            DEPLOY_PATH=$(escape "${DEPLOY_PATH}") \
+            DEPLOY_REPOSITORY=$(escape "${DEPLOY_REPOSITORY}") \
+            DEPLOY_USER=$(escape "${DEPLOY_USER}") \
+            IMAGE_TAG=$(escape "${IMAGE_TAG}") \
+            LINGCOO_APP_IMAGE=$(escape "${LINGCOO_APP_IMAGE}") sh -s"
+
+          ssh_opts="-o BatchMode=yes -o ConnectTimeout=20 -o ConnectionAttempts=3 -o ServerAliveInterval=15 -o ServerAliveCountMax=4"
+          attempt=1
+          max_attempts=8
+          while true; do
+            set +e
+            ssh ${ssh_opts} "${DEPLOY_USER}@${DEPLOY_HOST}" "${remote_cmd}" < ./deploy/scripts/deploy.sh
+            code=$?
+            set -e
+            if [ "${code}" -eq 0 ]; then exit 0; fi
+            if [ "${code}" -ne 255 ] || [ "${attempt}" -ge "${max_attempts}" ]; then exit "${code}"; fi
+            wait_s=$((attempt * 20))
+            [ "${wait_s}" -gt 120 ] && wait_s=120
+            echo "SSH transport drop; retrying in ${wait_s}s"
+            sleep "${wait_s}"
+            attempt=$((attempt + 1))
+          done

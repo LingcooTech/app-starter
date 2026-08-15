@@ -1,0 +1,82 @@
+#!/bin/sh
+
+set -eu
+
+: "${DEPLOY_PATH:?DEPLOY_PATH is required}"
+: "${DEPLOY_REPOSITORY:?DEPLOY_REPOSITORY is required}"
+: "${ACR_REGISTRY:?ACR_REGISTRY is required}"
+: "${ACR_USERNAME:?ACR_USERNAME is required}"
+: "${ACR_PASSWORD:?ACR_PASSWORD is required}"
+: "${LINGCOO_APP_IMAGE:?LINGCOO_APP_IMAGE is required}"
+: "${IMAGE_TAG:?IMAGE_TAG is required}"
+
+DEPLOY_COMPOSE_FILE="${DEPLOY_COMPOSE_FILE:-docker-compose.prod.yml}"
+DEPLOY_HEALTHCHECK_URL="${DEPLOY_HEALTHCHECK_URL:-https://frame.lingcoo.com/health/ready}"
+LEGACY_PATH="${LEGACY_PATH:-/opt/lingcoo-system-base-framework}"
+
+if [ ! -d "${DEPLOY_PATH}/.git" ]; then
+  install -d -m 755 "$(dirname "${DEPLOY_PATH}")"
+  git clone "${DEPLOY_REPOSITORY}" "${DEPLOY_PATH}"
+fi
+
+cd "${DEPLOY_PATH}"
+test -f .env || { echo "${DEPLOY_PATH}/.env is required"; exit 1; }
+
+git fetch --prune origin
+git checkout main
+git reset --hard origin/main
+
+printf '%s' "${ACR_PASSWORD}" | docker login "${ACR_REGISTRY}" --username "${ACR_USERNAME}" --password-stdin
+
+export APP_VERSION="${IMAGE_TAG}"
+export LINGCOO_APP_IMAGE
+docker compose -f "${DEPLOY_COMPOSE_FILE}" config >/dev/null
+docker compose -f "${DEPLOY_COMPOSE_FILE}" pull postgres api worker caddy
+docker compose -f "${DEPLOY_COMPOSE_FILE}" up -d postgres
+docker compose -f "${DEPLOY_COMPOSE_FILE}" run --rm --no-deps api node server/dist/migrate.js
+docker compose -f "${DEPLOY_COMPOSE_FILE}" up -d --no-deps api worker
+
+api_container_id="$(docker compose -f "${DEPLOY_COMPOSE_FILE}" ps -q api)"
+worker_container_id="$(docker compose -f "${DEPLOY_COMPOSE_FILE}" ps -q worker)"
+test -n "${api_container_id}"
+test -n "${worker_container_id}"
+
+attempt=1
+while [ "${attempt}" -le 30 ]; do
+  api_status="$(docker inspect --format '{{.State.Health.Status}}' "${api_container_id}" 2>/dev/null || true)"
+  worker_status="$(docker inspect --format '{{.State.Status}}' "${worker_container_id}" 2>/dev/null || true)"
+  if [ "${api_status}" = healthy ] && [ "${worker_status}" = running ]; then
+    break
+  fi
+  if [ "${attempt}" -eq 30 ]; then
+    docker compose -f "${DEPLOY_COMPOSE_FILE}" logs --tail=100 api worker || true
+    exit 1
+  fi
+  sleep 5
+  attempt=$((attempt + 1))
+done
+
+if [ -f "${LEGACY_PATH}/docker-compose.prod.yml" ]; then
+  legacy_running="$(docker compose -f "${LEGACY_PATH}/docker-compose.prod.yml" ps -q 2>/dev/null || true)"
+  if [ -n "${legacy_running}" ]; then
+    docker compose -f "${LEGACY_PATH}/docker-compose.prod.yml" down --remove-orphans
+  fi
+fi
+
+docker compose -f "${DEPLOY_COMPOSE_FILE}" up -d --no-deps caddy
+
+attempt=1
+while [ "${attempt}" -le 30 ]; do
+  if curl -fsS "${DEPLOY_HEALTHCHECK_URL}" >/dev/null; then
+    echo "health check passed on attempt ${attempt}"
+    break
+  fi
+  if [ "${attempt}" -eq 30 ]; then
+    docker compose -f "${DEPLOY_COMPOSE_FILE}" logs --tail=100 caddy api || true
+    exit 1
+  fi
+  sleep 5
+  attempt=$((attempt + 1))
+done
+
+sh ./deploy/scripts/verify-deployment.sh "${DEPLOY_HEALTHCHECK_URL%/health/ready}"
