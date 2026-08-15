@@ -19,7 +19,7 @@ env:
   DEPLOY_USER: root
   DEPLOY_PATH: /opt/lingcoo-app-starter
   DEPLOY_HEALTHCHECK_URL: https://frame.lingcoo.com/health/ready
-  DEPLOY_REPOSITORY: git@github.com:LingcooTech/lingcoo-app-starter.git
+  DEPLOY_REPOSITORY: git@github.com:LingcooTech/app-starter.git
 
 jobs:
   build-and-push-acr:
