@@ -38,6 +38,22 @@ export LINGCOO_APP_IMAGE
 docker compose -f "${DEPLOY_COMPOSE_FILE}" config >/dev/null
 docker compose -f "${DEPLOY_COMPOSE_FILE}" pull postgres api worker caddy
 docker compose -f "${DEPLOY_COMPOSE_FILE}" up -d postgres
+
+postgres_container="$(docker compose -f "${DEPLOY_COMPOSE_FILE}" ps -q postgres)"
+attempt=1
+while [ "${attempt}" -le 30 ]; do
+  postgres_health="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}running{{end}}' "${postgres_container}" 2>/dev/null || true)"
+  if [ "${postgres_health}" = healthy ] || [ "${postgres_health}" = running ]; then
+    break
+  fi
+  if [ "${attempt}" -eq 30 ]; then
+    docker compose -f "${DEPLOY_COMPOSE_FILE}" logs --tail=100 postgres || true
+    exit 1
+  fi
+  sleep 2
+  attempt=$((attempt + 1))
+done
+
 docker compose -f "${DEPLOY_COMPOSE_FILE}" run --rm --no-deps api node server/dist/migrate.js
 docker compose -f "${DEPLOY_COMPOSE_FILE}" up -d --no-deps api worker
 
