@@ -1,0 +1,14 @@
+packages:
+  - server
+  - admin
+  - web
+  - packages/*
+injectWorkspacePackages: true
+allowBuilds:
+  '@scarf/scarf': false
+  esbuild: true
+minimumReleaseAgeExclude:
+  - '@nestjs/common@11.2.1'
+  - '@nestjs/core@11.2.1'
+  - '@nestjs/platform-fastify@11.2.1'
+  - '@nestjs/testing@11.2.1'
