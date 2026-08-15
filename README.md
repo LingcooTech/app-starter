@@ -11,6 +11,13 @@
 
 本仓库是应用模板，不是 Lingcoo Runtime，也不提供自研扩展框架。
 
+## 开源协议
+
+本项目以 [Apache License 2.0](LICENSE) 发布。你可以在遵守许可证和保留
+必要声明的前提下使用、修改和分发本项目。
+
+参与贡献前请阅读 [贡献指南](CONTRIBUTING.md) 和 [安全策略](SECURITY.md)。
+
 ## 环境要求
 
 - Node.js 24 LTS
@@ -61,6 +68,16 @@ Deploy workflow 需要以下 GitHub Actions Secrets：
 - `ACR_PASSWORD`
 - `DEPLOY_SSH_PRIVATE_KEY`
 - `DEPLOY_SSH_KNOWN_HOSTS`
+
+部署目标等非敏感参数通过 GitHub Actions Variables 配置：
+
+- `DEPLOY_HOST`
+- `DEPLOY_USER`
+- `DEPLOY_PATH`
+- `DEPLOY_HEALTHCHECK_URL`
+- `DEPLOY_REPOSITORY`
+
+生产部署凭据不应写入仓库；生产环境建议使用专用的非 root 部署账号。
 
 服务器首次部署前，在 `/opt/lingcoo-app-starter/.env` 写入生产变量。可参考 [生产环境模板](deploy/production.env.example)，其中数据库密码必须随机生成，且要与 `DATABASE_URL` 中的密码一致。
 

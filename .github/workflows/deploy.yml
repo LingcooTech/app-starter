@@ -15,11 +15,11 @@ permissions:
 env:
   IMAGE_NAME: lingcoo-app-starter
   GHCR_IMAGE: ghcr.io/lingcootech/lingcoo-app-starter
-  DEPLOY_HOST: 82.157.22.93
-  DEPLOY_USER: root
-  DEPLOY_PATH: /opt/lingcoo-app-starter
-  DEPLOY_HEALTHCHECK_URL: https://frame.lingcoo.com/health/ready
-  DEPLOY_REPOSITORY: git@github.com:LingcooTech/app-starter.git
+  DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+  DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+  DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+  DEPLOY_HEALTHCHECK_URL: ${{ vars.DEPLOY_HEALTHCHECK_URL }}
+  DEPLOY_REPOSITORY: ${{ vars.DEPLOY_REPOSITORY }}
 
 jobs:
   build-and-push-acr:
