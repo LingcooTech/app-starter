@@ -3,6 +3,9 @@ packages:
   - admin
   - web
   - packages/*
+
+overrides:
+  '@nestjs/swagger>js-yaml': 5.2.2
 injectWorkspacePackages: true
 allowBuilds:
   '@scarf/scarf': false
