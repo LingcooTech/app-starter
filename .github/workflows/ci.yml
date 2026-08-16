@@ -34,7 +34,7 @@ jobs:
 
     env:
       NODE_ENV: test
-      APP_NAME: app-starter
+      APP_NAME: ts-app-starter
       APP_VERSION: ci
       API_HOST: 127.0.0.1
       API_PORT: 8090

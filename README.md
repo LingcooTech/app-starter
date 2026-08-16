@@ -1,4 +1,4 @@
-# App Starter
+# TS App Starter
 
 基于成熟 TypeScript Web 生态的通用业务应用起点：
 

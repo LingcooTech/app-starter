@@ -20,7 +20,7 @@ FROM dependencies AS build
 
 COPY . .
 RUN pnpm build
-RUN pnpm --filter @app-starter/server deploy --prod /prod/server
+RUN pnpm --filter @ts-app-starter/server deploy --prod /prod/server
 
 FROM ${NODE_IMAGE} AS runtime
 

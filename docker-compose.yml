@@ -1,4 +1,4 @@
-name: app-starter-dev
+name: ts-app-starter-dev
 
 services:
   postgres:

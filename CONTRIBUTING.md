@@ -25,7 +25,7 @@ Run the same checks used by CI:
 
 ```bash
 pnpm check
-docker build --tag app-starter:local .
+docker build --tag ts-app-starter:local .
 ```
 
 Keep pull requests focused, explain behavior changes, and add or update

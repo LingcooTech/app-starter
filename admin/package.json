@@ -1,5 +1,5 @@
 {
-  "name": "@app-starter/admin",
+  "name": "@ts-app-starter/admin",
   "version": "0.1.0",
   "private": true,
   "type": "module",

@@ -1,4 +1,4 @@
-# App Starter 重构实施方案
+# TS App Starter 重构实施方案
 
 ## 1. 目标
 

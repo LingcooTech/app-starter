@@ -36,6 +36,6 @@ jobs:
         with:
           context: .
           push: false
-          tags: app-starter:verify
+          tags: ts-app-starter:verify
           build-args: |
             APP_VERSION=${{ github.event.pull_request.head.sha || github.sha }}
