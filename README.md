@@ -1,5 +1,7 @@
 # Lingcoo TS App Starter
 
+中文说明 · [English](README.en.md)
+
 一个基于现代 TypeScript 技术栈的生产级全栈应用模板，用于快速构建、开发和部署商业应用。
 
 `ts-app-starter` 解决的是工程启动问题，而不是重新发明一个后端框架。它把 API、Worker、前端、数据库、容器化、CI 和生产部署所需的基础结构组合起来，让开发者可以把主要精力放在业务开发上。

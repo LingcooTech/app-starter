@@ -116,4 +116,5 @@ server/drizzle/*.sql
 - 复制源码代替版本化依赖；
 - 把业务模块强行塞进 Starter。
 
-公共能力未来通过独立的 `@lingcoo/*` 包发布，不在本仓库中提前实现。
+LingcooTech 的公共能力未来会通过独立的 `@lingcoo/*` 包仓库发布；这些包不属于当前 Starter，
+也不会在本仓库中提前实现。
