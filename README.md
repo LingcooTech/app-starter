@@ -211,6 +211,19 @@ Worker 使用相同的应用镜像，以独立进程运行，负责未来的：
 
 ## Quick Start
 
+### Create a new project (recommended)
+
+```bash
+npx create-ts-app-starter@latest my-app
+cd my-app
+cp .env.example .env
+pnpm dev
+```
+
+The generator creates a new Git history and does not copy production credentials, domains, registry settings, or server configuration. See [Project Generator](docs/cli.md) for all options.
+
+You can also use GitHub's **Use this template** button or clone the repository manually. The CLI is preferred because it performs the project-name transformation consistently.
+
 ### Requirements
 
 - Node.js 24 LTS 或更高的兼容版本；
@@ -352,6 +365,7 @@ docker compose pull
 
 模板不包含任何特定服务器、域名或镜像仓库配置。完整变量和凭据说明见：
 
+- [项目创建 CLI](docs/cli.md)
 - [Deployment guide](docs/deployment.md)
 - [生产环境模板](deploy/production.env.example)
 

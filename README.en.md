@@ -162,8 +162,22 @@ new runtime.
 
 See [architecture.md](docs/architecture.md) for the runtime topology and
 module boundaries.
+See [cli.md](docs/cli.md) for the project generator and template options.
 
 ## Quick start
+
+### Create a new project (recommended)
+
+```bash
+npx create-ts-app-starter@latest my-app
+cd my-app
+cp .env.example .env
+pnpm dev
+```
+
+The generator creates a new Git history and does not copy production credentials, domains, registry settings, or server configuration. See [Project Generator](docs/cli.md) for all options.
+
+You can also use GitHub's **Use this template** button or clone the repository manually. The CLI is preferred because it performs project-name transformation consistently.
 
 ### Requirements
 

@@ -1,0 +1,26 @@
+{
+  "name": "create-ts-app-starter",
+  "version": "0.1.0",
+  "description": "Create a production-ready TypeScript application from the ts-app-starter template.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "create-ts-app-starter": "cli.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "cli.mjs",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LingcooTech/ts-app-starter.git",
+    "directory": "create-ts-app-starter"
+  },
+  "homepage": "https://github.com/LingcooTech/ts-app-starter",
+  "bugs": {
+    "url": "https://github.com/LingcooTech/ts-app-starter/issues"
+  }
+}
