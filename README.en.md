@@ -1,331 +1,274 @@
 # Lingcoo TS App Starter
 
-[中文说明](README.md) · English
-
-A production-ready TypeScript full-stack application starter for building,
-developing, and deploying modern business applications.
+A production-ready starting point for building, shipping, and deploying complete business applications on a mature TypeScript web stack.
 
-## Overview
+[中文](README.md)
 
-Most business applications need the same foundation:
+## 1. Positioning
 
-- HTTP APIs;
-- administration and public web clients;
-- a relational database and repeatable migrations;
-- background workers and asynchronous jobs;
-- local development infrastructure;
-- Docker images and production configuration;
-- CI/CD and deployment health checks.
+Node.js + TypeScript remains one of the most modern, mature, and widely adopted combinations for web and business application development. Whenever the core business flow is “receive a request → process business logic → query a database or external API → return a result,” Node.js + TypeScript is usually a strong technology choice.
 
-Building this foundation from scratch is possible, but it creates repeated
-decisions around project structure, configuration validation, process models,
-database migrations, image builds, and releases.
+TS App Starter combines that proven technology path with a backend, frontend, database, engineering structure, Docker, and CI/CD into a complete foundation that can be developed, built, and deployed directly.
 
-`ts-app-starter` provides a clear and replaceable starting point:
-
-```text
-Create a project → build features → build an image → publish → deploy your server
-```
-
-The template is intentionally not bound to any Lingcoo server, domain,
-container registry, account, or production environment. Developers configure
-their own infrastructure after creating a project from the template.
+Its goal is simple: provide a mature, clear, and deployable starting point for applications with real business workflows.
 
-## What this project is
+## 2. What is it best suited for?
 
-`ts-app-starter` is:
-
-- a TypeScript full-stack application template;
-- a NestJS + Fastify backend foundation;
-- an API and Worker process model;
-- a React + Vite frontend foundation;
-- a PostgreSQL + Drizzle data layer foundation;
-- a Docker application that can be built and published by GitHub Actions;
-- a starting point for SaaS, CMS, commerce, education, retail, and internal
-  business applications.
-
-It is not:
-
-- another backend framework;
-- a runtime plugin system;
-- a prebuilt business domain platform;
-- a copy of an internal production environment;
-- a deployment product tied to a specific cloud provider.
-
-## Features
-
-### Runtime
-
-| Area            | Technology     |
-| --------------- | -------------- |
-| Runtime         | Node.js 24 LTS |
-| Language        | TypeScript     |
-| Package manager | pnpm 11        |
-| Workspace       | pnpm workspace |
-| Container       | Docker         |
-
-### Backend
-
-- NestJS application architecture;
-- Fastify HTTP adapter;
-- REST API foundation;
-- standalone NestJS Worker process;
-- PostgreSQL connection and health checks;
-- Drizzle ORM and SQL migrations;
-- Zod-based environment validation;
-- request IDs and secure HTTP headers;
-- optional OpenAPI/Swagger documentation.
-
-### Frontend
-
-- React;
-- Vite;
-- TypeScript;
-- independent Admin and Web applications;
-- static assets served by the application container in production.
-
-The template intentionally uses lightweight CSS instead of forcing a visual
-framework. Tailwind CSS can be added by a generated business project when it
-is useful for that project.
-
-### Infrastructure
-
-- Docker Compose for local and production topology;
-- one runtime image for API, Worker, and migration commands;
-- GitHub Actions CI;
-- optional image publishing and deployment workflow;
-- health checks and deployment smoke tests.
-
-## Why this stack
-
-Node.js + TypeScript is a runtime-and-language combination, not a complete
-software architecture. A complete architecture also needs a web framework,
-database, module boundaries, process model, configuration strategy,
-containerization, and release process.
-
-This starter combines:
-
-```text
-Node.js + TypeScript + NestJS + Fastify
-          + React + Vite + PostgreSQL + Drizzle
-          + Docker + GitHub Actions
-```
-
-This remains a mature and modern combination for Web and business software in 2026. Node.js is well suited to I/O-heavy services, NestJS supplies a
-structured application architecture, Fastify provides a low-overhead HTTP
-layer, and PostgreSQL provides mature relational data capabilities.
-
-- [Node.js TypeScript support](https://nodejs.org/api/typescript.html)
-- [TypeScript](https://www.typescriptlang.org/)
-- [NestJS](https://docs.nestjs.com/)
-- [Fastify](https://fastify.dev/)
-
-Node.js's built-in type stripping is intentionally lightweight and does not
-transform decorators. This repository therefore uses a normal TypeScript
-build pipeline for NestJS applications rather than relying on runtime type
-stripping alone.
-
-## Architecture
-
-The current repository is a lightweight pnpm workspace:
-
-```text
-ts-app-starter/
-├── server/                 # NestJS API, Worker, and Drizzle migrations
-│   ├── src/
-│   ├── drizzle/
-│   └── test/
-├── admin/                  # React + Vite administration client
-├── web/                    # React + Vite public client
-├── packages/               # project-local shared packages; currently empty
-├── docker/                 # Caddy configuration
-├── deploy/                 # generic deployment scripts and env templates
-├── .github/workflows/      # CI, Docker verification, security, optional Deploy
-├── Dockerfile              # single production runtime image
-├── docker-compose.yml      # local PostgreSQL
-└── docker-compose.prod.yml # PostgreSQL, API, Worker, and Caddy
-```
-
-The conceptual layers are:
-
-```text
-clients  ────────▶  services  ────────▶  database / integrations
-   │                   │
-   │                   └──────────────▶ worker / jobs
-   └── static assets served through the API container in production
-```
-
-The current `server/`, `admin/`, and `web/` paths are stable. A future
-directory normalization may use `services/api`, `services/worker`,
-`clients/admin`, and `clients/web`; this is an organizational evolution, not a
-new runtime.
-
-See [architecture.md](docs/architecture.md) for the runtime topology and
-module boundaries.
-See [cli.md](docs/cli.md) for the project generator and template options.
-
-## Quick start
-
-### Create a new project (recommended)
-
-```bash
-npx create-ts-app-starter@latest my-app
-cd my-app
-cp .env.example .env
-pnpm dev
-```
-
-The generator creates a new Git history and does not copy production credentials, domains, registry settings, or server configuration. See [Project Generator](docs/cli.md) for all options.
-
-You can also use GitHub's **Use this template** button or clone the repository manually. The CLI is preferred because it performs project-name transformation consistently.
-
-### Requirements
-
-- Node.js 24 LTS or a compatible newer version;
-- Corepack and pnpm 11;
-- Docker Desktop or Docker Engine with Compose.
-
-### Install
-
-```bash
-git clone https://github.com/LingcooTech/ts-app-starter.git
-cd ts-app-starter
-corepack enable
-pnpm install
-cp .env.example .env
-```
-
-### Start PostgreSQL and migrate
-
-```bash
-docker compose up -d
-pnpm db:migrate
-```
-
-### Start development
-
-```bash
-pnpm dev
-```
-
-| Service       | URL                                  |
-| ------------- | ------------------------------------ |
-| API liveness  | <http://localhost:8090/health/live>  |
-| API readiness | <http://localhost:8090/health/ready> |
-| OpenAPI       | <http://localhost:8090/api/docs>     |
-| Admin         | <http://localhost:5173/admin/>       |
-| Web           | <http://localhost:5174/>             |
-
-Start the Worker separately when needed:
-
-```bash
-pnpm dev:worker
-```
-
-Run the complete local validation suite with:
-
-```bash
-pnpm check
-```
-
-## Development
-
-Add backend modules under the backend module boundary:
-
-```text
-server/src/modules/users/
-├── users.module.ts
-├── users.controller.ts
-├── users.service.ts
-├── dto/
-├── schemas/
-└── repositories/
-```
-
-Admin pages belong under `admin/src/pages/`; public Web pages belong under
-`web/src/pages/`. Clients communicate with the backend through the HTTP API
-and never access PostgreSQL directly.
-
-Use the project-local `packages/` directory only for shared code that has a
-stable boundary and is used by multiple modules. A future LingcooTech package
-ecosystem will be versioned and published separately; it is not implemented
-inside this Starter yet.
-
-See [development.md](docs/development.md) for commands, configuration, tests,
-and pull request expectations.
-
-## Production deployment
-
-The Deploy workflow is disabled by default. A developer enables it in their
-own repository by setting:
-
-```text
-DEPLOY_ENABLED=true
-```
-
-The deployment flow is:
-
-```text
-Git push
-   ↓
-GitHub Actions CI
-   ↓
-Build Docker image
-   ↓
-Push to the developer's registry
-   ↓
-SSH to the developer's server
-   ↓
-docker compose pull
-   ↓
-Migrate and start API/Worker/Caddy
-   ↓
-Health check and smoke test
-```
-
-The production server never builds the application source. It only pulls a
-commit-tagged image and runs the deployment steps. See
-[deployment.md](docs/deployment.md) for Variables, Secrets, server
-preparation, rollback, and security rules.
-
-## Project philosophy
-
-This project does not try to replace Node.js, TypeScript, NestJS, React,
-PostgreSQL, or Docker with a new framework. It provides a tested combination
-of mature technologies and leaves business decisions to the application team.
-
-The goal is a useful starting point, not a hidden runtime that every project
-must continue synchronizing forever.
-
-## Roadmap
-
-Current:
-
-- full-stack TypeScript starter;
-- NestJS API and Worker;
-- React + Vite Admin/Web;
-- PostgreSQL + Drizzle;
-- Docker Compose;
-- CI/CD and generic deployment template;
-- Apache-2.0 open source governance.
-
-Next:
-
-- `npx create-ts-app-starter` project generator;
-- more deployment presets;
-- independent reusable packages;
-- `services/` and `clients/` directory normalization;
-- documentation site and compatibility matrix.
-
-## Contributing and security
-
-- [Contributing guide](CONTRIBUTING.md)
-- [Security policy](SECURITY.md)
-- [Code of Conduct](CODE_OF_CONDUCT.md)
-
-Never commit passwords, tokens, SSH private keys, production `.env` files, or
-cloud credentials.
+It is designed for complete business applications with a user-facing client, an administration console, APIs, a database, and a clear business process that will evolve over time.
+
+The client may be a web application, mini program, mobile app, H5 application, or another terminal. The administration console serves staff, merchants, institutions, or internal business teams. APIs provide business capabilities and data access, while PostgreSQL stores core business data.
+
+### Industry applications
+
+Build complete workflows for industries such as education and training, retail, stores, property management, logistics, and enterprise services. These applications usually coordinate multiple business processes in one system.
+
+### Vertical applications
+
+Build deeply around a defined business domain such as CRM, booking, membership, orders, content, after-sales, tickets, projects, or subscriptions. These applications do not have to belong to one industry and can serve multiple industries.
+
+TS App Starter does not try to cover every software shape. It may be too heavy for a website with only a few pages, while a very large system with complex distributed infrastructure will need additional design. It focuses on the most common complete business applications.
+
+## 3. Why use it?
+
+Turning an idea into software that is technically sound, well engineered, and reliably deliverable usually involves requirements analysis, product planning, technology selection, architecture design, engineering governance, deployment, and operations.
+
+Technology selection, architecture, and engineering governance are especially important. Although Vibe Coding has lowered the barrier to programming, many people crossing over from other fields do not yet have a strong understanding of technology stacks and architecture. It is easy to follow AI blindly, rebuild existing capabilities, and eventually create an unmaintainable monolith.
+
+A clear technology combination, architecture, and engineering foundation are essential to every project and strongly influence whether a product can be maintained over the long term. Careful reasoning and complete testing remain necessary after the design is complete.
+
+TS App Starter prepares these foundations in advance, allowing a new project to focus its main effort on the business itself.
+
+## 4. Why trust it?
+
+### A mature technology stack
+
+Business applications are built on a mainstream, mature TypeScript web ecosystem instead of an unverified custom foundation.
+
+TS App Starter focuses on selection, composition, conventions, and engineering: mature technologies handle HTTP, backend modules, databases, frontend applications, containers, and CI/CD, while the starter organizes them into one coherent application.
+
+### A proven application architecture
+
+The backend uses a modular monolith by default: the application remains simple to deploy while internal boundaries are organized by business module. As the product grows, Worker processes, Redis, queues, object storage, or independent services can be added without introducing microservice complexity on day one.
+
+    server/src/modules/
+    ├── users/
+    ├── customers/
+    ├── products/
+    ├── orders/
+    └── payments/
+
+### A reliable delivery model
+
+Production servers run artifacts; they do not build source code. CI performs checks, tests, builds, and Docker image creation. The server pulls the completed image and runs it.
+
+Builds often require more peak CPU and memory than normal application operation. Building images in CI and pulling them onto the server lowers hardware requirements and prevents builds from affecting online services.
+
+    Git Push
+      ↓
+    GitHub Actions
+      ↓
+    Check / Test / Build
+      ↓
+    Docker Image
+      ↓
+    Container Registry
+      ↓
+    Production Server
+      ↓
+    Pull → Migrate → Start → Health Check
+
+### Lightweight runtime
+
+TS App Starter keeps the runtime as simple as possible. It does not require Kubernetes, a microservice cluster, or a complete distributed platform.
+
+A basic business application usually needs only Application + PostgreSQL + Caddy. Add a Worker for background jobs, and add Redis, BullMQ, object storage, or search only when the business requires them.
+
+In a measurement of the blank starter on a server with 2 CPU cores and 3.6 GB RAM, API, Worker, PostgreSQL, and Caddy used approximately 161 MB of memory in total. For a lightweight industry application, 4 GB RAM generally provides comfortable headroom.
+
+## 5. Overall application architecture
+
+    TS App Starter
+    ├── Frontend
+    │   ├── Admin       React + Vite
+    │   └── Web         React + Vite / Next.js
+    ├── Server
+    │   ├── API         NestJS + Fastify
+    │   └── Worker      NestJS Application Context
+    ├── Data
+    │   └── PostgreSQL + Drizzle
+    └── Engineering
+        ├── pnpm Workspace
+        ├── Docker / Docker Compose
+        └── GitHub Actions
+
+Admin and Web are the two default frontend entry points. A mini program, mobile app, or another terminal can also consume the API. The API handles real-time requests, while the Worker handles asynchronous jobs and background work.
+
+| Layer | Technology | Main responsibility |
+| --- | --- | --- |
+| Language | TypeScript | One language and type system across frontend and backend |
+| Runtime | Node.js | Runs the API, Worker, and server-side tools |
+| Backend architecture | NestJS | Organizes modules, dependencies, business code, and tests |
+| HTTP | Fastify | Handles HTTP requests and responses |
+| Database | PostgreSQL | Stores core business data |
+| Data access | Drizzle ORM | Manages database access and schemas with TypeScript |
+| Validation | Zod / JSON Schema | Validates configuration and API data |
+| Frontend | React + Vite / Next.js | Builds administration and user-facing applications |
+| Workspace | pnpm | Manages dependencies and the multi-project workspace |
+| Delivery | Docker | Builds reproducible runtime images |
+| CI/CD | GitHub Actions | Automates checks, tests, builds, and publishing |
+
+## 6. Repository structure
+
+The recommended boundary is one business application per Git repository. Each application has independent development, versioning, CI, image publishing, and deployment, keeping the system clear and lightweight.
+
+    ts-app-starter/
+    ├── server/                  # NestJS API + Worker
+    │   ├── src/
+    │   │   ├── main.ts
+    │   │   ├── worker.ts
+    │   │   ├── app.module.ts
+    │   │   ├── worker.module.ts
+    │   │   ├── common/
+    │   │   ├── infrastructure/
+    │   │   └── modules/
+    │   ├── drizzle/
+    │   └── test/
+    ├── admin/                   # React + Vite administration console
+    ├── web/                     # React + Vite public web application
+    ├── packages/                # Shared packages, added when needed
+    ├── docker/                  # Caddy / Docker configuration
+    ├── deploy/                  # Deployment scripts and environment templates
+    ├── .github/workflows/       # CI / Build / Publish / Deploy
+    ├── Dockerfile
+    ├── docker-compose.yml
+    ├── docker-compose.prod.yml
+    ├── pnpm-workspace.yaml
+    └── package.json
+
+Add new business capabilities as NestJS Modules in server first instead of extracting them into independent packages prematurely. Only code that is genuinely shared across multiple projects and has stable boundaries should move into packages/.
+
+## 7. How to build a new application with it
+
+### Option A: GitHub Template (available now)
+
+The repository is now enabled as a GitHub Template Repository. Open the repository page, click **Use this template**, and create your own repository. A template-created repository has independent history and does not inherit the Starter's commits.
+
+When using the web template flow, go directly into the new repository. Do not run rm -rf .git; the template already creates an independent repository. Do not develop business features directly in the template repository.
+
+### Option B: CLI (recommended after npm publication)
+
+The create-ts-app-starter npm organization is currently waiting for the name to be released. After the package is published, the recommended flow will be:
+
+    npx create-ts-app-starter@latest my-app
+    cd my-app
+
+The CLI downloads the template, replaces the project name, removes the original Git history, initializes a new Git repository, and installs dependencies according to the selected options.
+
+### Step 1: Install dependencies and configure the environment
+
+    corepack enable
+    pnpm install
+    cp .env.example .env
+
+Configure the local database, ports, and other required variables in .env. Never commit production passwords, tokens, or private keys to Git.
+
+### Step 2: Start the local foundation
+
+    docker compose up -d
+    pnpm db:migrate
+    pnpm dev
+
+This starts the local API, Admin, Web, and PostgreSQL development environment. Start the Worker separately when needed.
+
+### Step 3: Develop the business
+
+Add backend capabilities as business modules, add administration pages to Admin, and let Web, mini programs, or mobile apps consume the API. Manage database changes through Drizzle schemas and migrations.
+
+    Requirement
+        ↓
+    Business module
+        ↓
+    API / Database
+        ↓
+    Admin / Web / Mini program / App
+        ↓
+    Tests
+
+### Step 4: Run engineering checks
+
+    pnpm check
+
+### Step 5: Create and push your GitHub repository
+
+When using the GitHub Template or CLI, the project already has an independent Git repository. Create an empty repository under your own account and run:
+
+    git remote add origin git@github.com:<your-account>/<your-repository>.git
+    git add .
+    git commit -m "Initial project"
+    git push -u origin main
+
+### Step 6: Build and publish the Docker image
+
+    Source
+      ↓
+    GitHub Actions
+      ↓
+    Production Build
+      ↓
+    Docker Image
+      ↓
+    GHCR / ACR / Other Registry
+
+The image contains the production code and dependencies required to run the application. The production server does not need to install dependencies or compile source code again.
+
+### Step 7: Pull and start on the server
+
+    docker compose pull
+    docker compose up -d
+
+The deployment process runs database migrations according to project configuration, starts API, Worker, and Caddy, and performs health checks. The server only runs the image built by CI; it does not build source code directly.
+
+### Step 8: Access the application through the domain
+
+    User
+     ↓
+    Domain / HTTPS
+     ↓
+    Caddy
+     ↓
+    Web / Admin / API
+     ↓
+    Business Application
+
+## 8. How to extend it
+
+Keep the foundation simple and add capabilities when the business needs them:
+
+| Need | Suggested extension |
+| --- | --- |
+| More asynchronous work | Worker / BullMQ |
+| Caching or queues | Redis |
+| Files and images | S3 / OSS / COS or another object store |
+| Email and notifications | Email / SMS / Push provider |
+| Online payments | Payment provider SDK |
+| Observability and tracing | OpenTelemetry / Logs / Metrics |
+| Independent scaling | Split into an independent Service |
+
+These capabilities are not mandatory dependencies. Add them only when the business actually needs them.
+
+## 9. Core principles
+
+- Mature technology first: choose mainstream, mature, and actively maintained foundations.
+- Modular monolith first: keep development and deployment simple, then split based on real needs.
+- One product, one repository: keep source, versions, CI, images, and deployment boundaries aligned.
+- Engineering from day one: tests, builds, Docker, CI/CD, and health checks are not last-minute additions.
+- Production runs artifacts: build images in CI and pull them into production; never compile on the server.
+- Expand on demand: add only the infrastructure the business actually needs.
+
+## 10. In one sentence
+
+TS App Starter is a starting project built on a mature TypeScript web stack for directly developing and deploying complete business applications.
 
 ## License
 
-Apache-2.0. See [LICENSE](LICENSE).
+Apache License 2.0. See LICENSE.

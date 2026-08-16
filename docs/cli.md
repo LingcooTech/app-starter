@@ -1,6 +1,6 @@
 # Project Generator
 
-`create-ts-app-starter` is the recommended way to create an independent application from this starter.
+`create-ts-app-starter` is the planned recommended way to create an independent application from this starter. The package source is included in this repository; npm publication is pending release of the requested organization name.
 
 ```bash
 npx create-ts-app-starter@latest my-app
