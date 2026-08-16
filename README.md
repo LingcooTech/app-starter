@@ -2,7 +2,7 @@
 
 一个建立在成熟 TypeScript Web 技术栈之上的、可直接开发和部署完整业务应用的起始工程。
 
-[English](README.en.md)
+语言 / Language: 中文 · [English](README.en.md)
 
 ## 1. 项目定位
 
@@ -45,6 +45,20 @@ TS App Starter 把这些基础工作预先完成。新项目可以直接建立�
 它把业务应用建立在成熟、主流的 TypeScript Web 技术之上，而不是把核心能力建立在未经验证的自定义底座上。
 
 TS App Starter 重点解决的是选型、组合、规范和工程化：HTTP、后端模块、数据库、前端、容器和 CI/CD 分别交给成熟技术负责，再把它们组织成一套完整应用。
+
+| 层级 | 技术 | 主要作用 |
+| --- | --- | --- |
+| 语言 | TypeScript | 统一前后端开发语言和类型系统 |
+| 运行环境 | Node.js | 运行 API、Worker 和服务端工具 |
+| 后端架构 | NestJS | 组织模块、依赖、业务代码和测试 |
+| HTTP | Fastify | 处理 HTTP 请求和响应 |
+| 数据库 | PostgreSQL | 保存核心业务数据 |
+| 数据访问 | Drizzle ORM | 以 TypeScript 管理数据库访问和 Schema |
+| 数据校验 | Zod / JSON Schema | 校验配置和接口数据 |
+| 前端 | React + Vite / Next.js | 构建管理后台和 Web 用户端 |
+| Workspace | pnpm | 管理依赖和多工程 Workspace |
+| 应用交付 | Docker | 构建可重复部署的运行镜像 |
+| CI/CD | GitHub Actions | 自动检查、测试、构建和发布 |
 
 ### 成熟的应用架构
 
@@ -102,20 +116,6 @@ TS App Starter 默认采用尽可能简单的运行结构，不要求 Kubernetes
         └── GitHub Actions
 
 Admin 和 Web 是默认的两个前端入口；实际业务也可以由小程序、App 或其他终端通过 API 接入。Server 中 API 负责实时请求，Worker 负责异步任务和后台工作。
-
-| 层级 | 技术 | 主要作用 |
-| --- | --- | --- |
-| 语言 | TypeScript | 统一前后端开发语言和类型系统 |
-| 运行环境 | Node.js | 运行 API、Worker 和服务端工具 |
-| 后端架构 | NestJS | 组织模块、依赖、业务代码和测试 |
-| HTTP | Fastify | 处理 HTTP 请求和响应 |
-| 数据库 | PostgreSQL | 保存核心业务数据 |
-| 数据访问 | Drizzle ORM | 以 TypeScript 管理数据库访问和 Schema |
-| 数据校验 | Zod / JSON Schema | 校验配置和接口数据 |
-| 前端 | React + Vite / Next.js | 构建管理后台和 Web 用户端 |
-| Workspace | pnpm | 管理依赖和多工程 Workspace |
-| 应用交付 | Docker | 构建可重复部署的运行镜像 |
-| CI/CD | GitHub Actions | 自动检查、测试、构建和发布 |
 
 ## 6. Repository 结构
 

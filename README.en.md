@@ -2,7 +2,7 @@
 
 A production-ready starting point for building, shipping, and deploying complete business applications on a mature TypeScript web stack.
 
-[中文](README.md)
+Language: [中文](README.md) · English
 
 ## 1. Positioning
 
@@ -45,6 +45,20 @@ TS App Starter prepares these foundations in advance, allowing a new project to 
 Business applications are built on a mainstream, mature TypeScript web ecosystem instead of an unverified custom foundation.
 
 TS App Starter focuses on selection, composition, conventions, and engineering: mature technologies handle HTTP, backend modules, databases, frontend applications, containers, and CI/CD, while the starter organizes them into one coherent application.
+
+| Layer | Technology | Main responsibility |
+| --- | --- | --- |
+| Language | TypeScript | One language and type system across frontend and backend |
+| Runtime | Node.js | Runs the API, Worker, and server-side tools |
+| Backend architecture | NestJS | Organizes modules, dependencies, business code, and tests |
+| HTTP | Fastify | Handles HTTP requests and responses |
+| Database | PostgreSQL | Stores core business data |
+| Data access | Drizzle ORM | Manages database access and schemas with TypeScript |
+| Validation | Zod / JSON Schema | Validates configuration and API data |
+| Frontend | React + Vite / Next.js | Builds administration and user-facing applications |
+| Workspace | pnpm | Manages dependencies and the multi-project workspace |
+| Delivery | Docker | Builds reproducible runtime images |
+| CI/CD | GitHub Actions | Automates checks, tests, builds, and publishing |
 
 ### A proven application architecture
 
@@ -102,20 +116,6 @@ In a measurement of the blank starter on a server with 2 CPU cores and 3.6 GB RA
         └── GitHub Actions
 
 Admin and Web are the two default frontend entry points. A mini program, mobile app, or another terminal can also consume the API. The API handles real-time requests, while the Worker handles asynchronous jobs and background work.
-
-| Layer | Technology | Main responsibility |
-| --- | --- | --- |
-| Language | TypeScript | One language and type system across frontend and backend |
-| Runtime | Node.js | Runs the API, Worker, and server-side tools |
-| Backend architecture | NestJS | Organizes modules, dependencies, business code, and tests |
-| HTTP | Fastify | Handles HTTP requests and responses |
-| Database | PostgreSQL | Stores core business data |
-| Data access | Drizzle ORM | Manages database access and schemas with TypeScript |
-| Validation | Zod / JSON Schema | Validates configuration and API data |
-| Frontend | React + Vite / Next.js | Builds administration and user-facing applications |
-| Workspace | pnpm | Manages dependencies and the multi-project workspace |
-| Delivery | Docker | Builds reproducible runtime images |
-| CI/CD | GitHub Actions | Automates checks, tests, builds, and publishing |
 
 ## 6. Repository structure
 
