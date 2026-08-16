@@ -7,9 +7,7 @@ export default defineConfig({
   schema: './src/**/*.schema.ts',
   out: './drizzle',
   dbCredentials: {
-    url:
-      process.env.DATABASE_URL ??
-      'postgres://lingcoo_app:lingcoo_app_password@localhost:5438/lingcoo_app',
+    url: process.env.DATABASE_URL ?? 'postgres://app:app_password@localhost:5438/app',
   },
   strict: true,
   verbose: true,

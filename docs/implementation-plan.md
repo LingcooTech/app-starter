@@ -1,14 +1,14 @@
-# Lingcoo App Starter 重构实施方案
+# App Starter 重构实施方案
 
 ## 1. 目标
 
-以成熟 TypeScript Web 生态重建 Lingcoo 应用底座，停止维护自研 Frame Runtime。新底座采用 NestJS、Fastify、PostgreSQL、Drizzle、Zod、React、Vite、Docker、GitHub Actions 与 Caddy。
+以成熟 TypeScript Web 生态建立可复用的应用底座，停止维护自研 Frame Runtime。新底座采用 NestJS、Fastify、PostgreSQL、Drizzle、Zod、React、Vite、Docker、GitHub Actions 与 Caddy。
 
 核心约束：
 
 - 一个业务应用对应一个 Git Repository、一个版本、一套 CI 和一个 Runtime Image。
 - 单仓库内部只使用轻量 pnpm Workspace，默认不引入 Turborepo。
-- 应用内扩展使用 NestJS Module，不建立 Extension Manifest、Capability Registry 或 Lingcoo Runtime。
+- 应用内扩展使用 NestJS Module，不建立 Extension Manifest、Capability Registry 或自研 Runtime。
 - 跨应用包只有在至少两个真实应用中形成稳定边界后才提取。
 - API 与 Worker 共享同一镜像，通过不同启动命令运行。
 
@@ -44,7 +44,7 @@ docker/       Caddy 等部署配置
 - readiness 真实检查 PostgreSQL；liveness 不依赖数据库。
 - 同一数据库重复迁移不会产生新变更。
 - `pnpm check` 与 Docker Build 全部通过。
-- 不存在任何 `@lingcootech/frame-*` 依赖、业务模块或业务数据表。
+- 不存在任何旧版自研 Frame 依赖、业务模块或业务数据表。
 
 ## 4. 第二阶段：身份与后台闭环
 

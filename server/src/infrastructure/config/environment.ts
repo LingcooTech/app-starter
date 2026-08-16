@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const environmentSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  APP_NAME: z.string().trim().min(1).default('lingcoo-app-starter'),
+  APP_NAME: z.string().trim().min(1).default('app-starter'),
   APP_VERSION: z.string().trim().min(1).default('development'),
   API_HOST: z.string().trim().min(1).default('0.0.0.0'),
   API_PORT: z.coerce.number().int().min(1).max(65_535).default(8090),

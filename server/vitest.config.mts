@@ -7,7 +7,7 @@ export default defineConfig({
     include: ['test/**/*.spec.ts'],
     env: {
       NODE_ENV: 'test',
-      APP_NAME: 'lingcoo-app-starter-test',
+      APP_NAME: 'app-starter-test',
       APP_VERSION: 'test',
       API_HOST: '127.0.0.1',
       API_PORT: '8090',

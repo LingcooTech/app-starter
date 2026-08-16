@@ -2,7 +2,7 @@
 
 set -eu
 
-base_url="${1:-https://frame.lingcoo.com}"
+base_url="${1:?usage: verify-deployment.sh <base-url>}"
 base_url="${base_url%/}"
 
 assert_status() {
@@ -46,8 +46,8 @@ assert_status /health/live 200
 assert_status /health/ready 200
 assert_status / 200
 assert_status /admin/ 200
-assert_contains / '<title>Lingcoo App</title>'
-assert_contains /admin/ '<title>Lingcoo Admin</title>'
+assert_contains / '<title>Application</title>'
+assert_contains /admin/ '<title>Application Admin</title>'
 assert_header / 'X-Content-Type-Options' 'nosniff'
 assert_header / 'Referrer-Policy' 'strict-origin-when-cross-origin'
 

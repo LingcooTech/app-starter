@@ -1,19 +1,19 @@
 {
-  "name": "lingcoo-app-starter",
+  "name": "app-starter",
   "version": "0.1.0",
   "private": true,
-  "description": "Lingcoo application starter built with NestJS, Fastify, Drizzle and React.",
+  "description": "A production-ready application starter built with NestJS, Fastify, Drizzle and React.",
   "license": "UNLICENSED",
   "packageManager": "pnpm@11.21.0",
   "engines": {
     "node": ">=24.0.0 <25"
   },
   "scripts": {
-    "dev": "corepack pnpm --parallel --filter @lingcoo/server --filter @lingcoo/admin --filter @lingcoo/web dev",
-    "dev:server": "corepack pnpm --filter @lingcoo/server dev",
-    "dev:worker": "corepack pnpm --filter @lingcoo/server dev:worker",
-    "dev:admin": "corepack pnpm --filter @lingcoo/admin dev",
-    "dev:web": "corepack pnpm --filter @lingcoo/web dev",
+    "dev": "corepack pnpm --parallel --filter @app-starter/server --filter @app-starter/admin --filter @app-starter/web dev",
+    "dev:server": "corepack pnpm --filter @app-starter/server dev",
+    "dev:worker": "corepack pnpm --filter @app-starter/server dev:worker",
+    "dev:admin": "corepack pnpm --filter @app-starter/admin dev",
+    "dev:web": "corepack pnpm --filter @app-starter/web dev",
     "build": "corepack pnpm -r --if-present run build",
     "typecheck": "corepack pnpm -r --if-present run typecheck",
     "test": "corepack pnpm -r --if-present run test",
@@ -21,11 +21,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "corepack pnpm format:check && corepack pnpm lint && corepack pnpm typecheck && corepack pnpm test && corepack pnpm build",
-    "db:generate": "corepack pnpm --filter @lingcoo/server db:generate",
-    "db:migrate": "corepack pnpm --filter @lingcoo/server db:migrate",
-    "db:studio": "corepack pnpm --filter @lingcoo/server db:studio",
-    "start": "corepack pnpm --filter @lingcoo/server start:prod",
-    "start:worker": "corepack pnpm --filter @lingcoo/server start:worker"
+    "db:generate": "corepack pnpm --filter @app-starter/server db:generate",
+    "db:migrate": "corepack pnpm --filter @app-starter/server db:migrate",
+    "db:studio": "corepack pnpm --filter @app-starter/server db:studio",
+    "start": "corepack pnpm --filter @app-starter/server start:prod",
+    "start:worker": "corepack pnpm --filter @app-starter/server start:worker"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

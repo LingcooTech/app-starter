@@ -4,7 +4,7 @@ export function App() {
       <div className="glow glow--one" />
       <div className="glow glow--two" />
       <section className="hero">
-        <span className="badge">LINGCOO MODERN TYPESCRIPT STACK</span>
+        <span className="badge">MODERN TYPESCRIPT APPLICATION</span>
         <h1>业务从这里开始，框架到这里为止。</h1>
         <p>
           NestJS、Fastify、PostgreSQL、Drizzle 与 React 已完成最小组合。当前页面不承载任何行业模型。

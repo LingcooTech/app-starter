@@ -13,22 +13,21 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: lingcoo-app-starter
-  GHCR_IMAGE: ghcr.io/lingcootech/lingcoo-app-starter
-  DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
-  DEPLOY_USER: ${{ vars.DEPLOY_USER }}
-  DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
-  DEPLOY_HEALTHCHECK_URL: ${{ vars.DEPLOY_HEALTHCHECK_URL }}
-  DEPLOY_REPOSITORY: ${{ vars.DEPLOY_REPOSITORY }}
+  IMAGE_NAME: ${{ vars.IMAGE_NAME }}
+  GHCR_IMAGE: ${{ vars.GHCR_IMAGE }}
+  DEPLOY_ENABLED: ${{ vars.DEPLOY_ENABLED }}
 
 jobs:
   build-and-push-acr:
     if: >
-      github.event_name == 'workflow_dispatch' ||
+      vars.DEPLOY_ENABLED == 'true' &&
       (
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.head_branch == 'main' &&
-        github.event.workflow_run.head_repository.full_name == github.repository
+        github.event_name == 'workflow_dispatch' ||
+        (
+          github.event.workflow_run.conclusion == 'success' &&
+          github.event.workflow_run.head_branch == 'main' &&
+          github.event.workflow_run.head_repository.full_name == github.repository
+        )
       )
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -91,7 +90,7 @@ jobs:
 
   publish-ghcr:
     needs: build-and-push-acr
-    if: ${{ needs.build-and-push-acr.result == 'success' }}
+    if: ${{ vars.DEPLOY_ENABLED == 'true' && needs.build-and-push-acr.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -130,7 +129,7 @@ jobs:
     needs:
       - build-and-push-acr
       - publish-ghcr
-    if: ${{ needs.build-and-push-acr.result == 'success' && needs.publish-ghcr.result == 'success' }}
+    if: ${{ vars.DEPLOY_ENABLED == 'true' && needs.build-and-push-acr.result == 'success' && needs.publish-ghcr.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     concurrency:
@@ -160,24 +159,26 @@ jobs:
           ACR_PASSWORD: ${{ secrets.ACR_PASSWORD }}
           ACR_REGISTRY: ${{ secrets.ACR_REGISTRY }}
           ACR_USERNAME: ${{ secrets.ACR_USERNAME }}
-          DEPLOY_HEALTHCHECK_URL: ${{ env.DEPLOY_HEALTHCHECK_URL }}
-          DEPLOY_HOST: ${{ env.DEPLOY_HOST }}
-          DEPLOY_PATH: ${{ env.DEPLOY_PATH }}
-          DEPLOY_REPOSITORY: ${{ env.DEPLOY_REPOSITORY }}
-          DEPLOY_USER: ${{ env.DEPLOY_USER }}
+          DEPLOY_GIT_KEY: ${{ vars.DEPLOY_GIT_KEY }}
+          DEPLOY_HEALTHCHECK_URL: ${{ vars.DEPLOY_HEALTHCHECK_URL }}
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+          DEPLOY_REPOSITORY: ${{ vars.DEPLOY_REPOSITORY }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
           IMAGE_TAG: ${{ needs.build-and-push-acr.outputs.image_tag }}
-          LINGCOO_APP_IMAGE: ${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ needs.build-and-push-acr.outputs.image_tag }}
+          APP_IMAGE: ${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ needs.build-and-push-acr.outputs.image_tag }}
         run: |
           escape() { printf '%q' "$1"; }
           remote_cmd="ACR_PASSWORD=$(escape "${ACR_PASSWORD}") \
             ACR_REGISTRY=$(escape "${ACR_REGISTRY}") \
             ACR_USERNAME=$(escape "${ACR_USERNAME}") \
+            DEPLOY_GIT_KEY=$(escape "${DEPLOY_GIT_KEY}") \
             DEPLOY_HEALTHCHECK_URL=$(escape "${DEPLOY_HEALTHCHECK_URL}") \
             DEPLOY_PATH=$(escape "${DEPLOY_PATH}") \
             DEPLOY_REPOSITORY=$(escape "${DEPLOY_REPOSITORY}") \
             DEPLOY_USER=$(escape "${DEPLOY_USER}") \
             IMAGE_TAG=$(escape "${IMAGE_TAG}") \
-            LINGCOO_APP_IMAGE=$(escape "${LINGCOO_APP_IMAGE}") sh -s"
+            APP_IMAGE=$(escape "${APP_IMAGE}") sh -s"
 
           ssh_opts="-o BatchMode=yes -o ConnectTimeout=20 -o ConnectionAttempts=3 -o ServerAliveInterval=15 -o ServerAliveCountMax=4"
           attempt=1

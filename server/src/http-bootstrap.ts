@@ -63,7 +63,7 @@ export async function configureHttpApplication(app: NestFastifyApplication): Pro
       app,
       new DocumentBuilder()
         .setTitle(config.getOrThrow<string>('APP_NAME'))
-        .setDescription('Lingcoo application API')
+        .setDescription('Application API')
         .setVersion(config.getOrThrow<string>('APP_VERSION'))
         .build(),
     );

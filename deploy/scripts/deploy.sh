@@ -7,17 +7,17 @@ set -eu
 : "${ACR_REGISTRY:?ACR_REGISTRY is required}"
 : "${ACR_USERNAME:?ACR_USERNAME is required}"
 : "${ACR_PASSWORD:?ACR_PASSWORD is required}"
-: "${LINGCOO_APP_IMAGE:?LINGCOO_APP_IMAGE is required}"
+: "${APP_IMAGE:?APP_IMAGE is required}"
 : "${IMAGE_TAG:?IMAGE_TAG is required}"
 
 DEPLOY_COMPOSE_FILE="${DEPLOY_COMPOSE_FILE:-docker-compose.prod.yml}"
-DEPLOY_HEALTHCHECK_URL="${DEPLOY_HEALTHCHECK_URL:-https://frame.lingcoo.com/health/ready}"
-LEGACY_PATH="${LEGACY_PATH:-/opt/lingcoo-system-base-framework}"
-DEPLOY_GIT_KEY="${DEPLOY_GIT_KEY:-/root/.ssh/id_ed25519_lingcoo_app_starter}"
+DEPLOY_HEALTHCHECK_URL="${DEPLOY_HEALTHCHECK_URL:?DEPLOY_HEALTHCHECK_URL is required}"
 
-test -f "${DEPLOY_GIT_KEY}" || { echo "${DEPLOY_GIT_KEY} is required"; exit 1; }
-GIT_SSH_COMMAND="ssh -i ${DEPLOY_GIT_KEY} -o IdentitiesOnly=yes"
-export GIT_SSH_COMMAND
+if [ -n "${DEPLOY_GIT_KEY:-}" ]; then
+  test -f "${DEPLOY_GIT_KEY}" || { echo "${DEPLOY_GIT_KEY} is required"; exit 1; }
+  GIT_SSH_COMMAND="ssh -i ${DEPLOY_GIT_KEY} -o IdentitiesOnly=yes"
+  export GIT_SSH_COMMAND
+fi
 
 if [ ! -d "${DEPLOY_PATH}/.git" ]; then
   install -d -m 755 "$(dirname "${DEPLOY_PATH}")"
@@ -34,7 +34,7 @@ git reset --hard origin/main
 printf '%s' "${ACR_PASSWORD}" | docker login "${ACR_REGISTRY}" --username "${ACR_USERNAME}" --password-stdin
 
 export APP_VERSION="${IMAGE_TAG}"
-export LINGCOO_APP_IMAGE
+export APP_IMAGE
 docker compose -f "${DEPLOY_COMPOSE_FILE}" config >/dev/null
 docker compose -f "${DEPLOY_COMPOSE_FILE}" pull postgres api worker caddy
 docker compose -f "${DEPLOY_COMPOSE_FILE}" up -d postgres
@@ -76,13 +76,6 @@ while [ "${attempt}" -le 30 ]; do
   sleep 5
   attempt=$((attempt + 1))
 done
-
-if [ -f "${LEGACY_PATH}/docker-compose.prod.yml" ]; then
-  legacy_running="$(docker compose -f "${LEGACY_PATH}/docker-compose.prod.yml" ps -q 2>/dev/null || true)"
-  if [ -n "${legacy_running}" ]; then
-    docker compose -f "${LEGACY_PATH}/docker-compose.prod.yml" down --remove-orphans
-  fi
-fi
 
 docker compose -f "${DEPLOY_COMPOSE_FILE}" up -d --no-deps caddy
 

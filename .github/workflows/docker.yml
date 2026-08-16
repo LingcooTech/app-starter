@@ -36,6 +36,6 @@ jobs:
         with:
           context: .
           push: false
-          tags: lingcoo-app-starter:verify
+          tags: app-starter:verify
           build-args: |
             APP_VERSION=${{ github.event.pull_request.head.sha || github.sha }}

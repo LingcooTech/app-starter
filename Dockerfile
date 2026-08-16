@@ -20,7 +20,7 @@ FROM dependencies AS build
 
 COPY . .
 RUN pnpm build
-RUN pnpm --filter @lingcoo/server deploy --prod /prod/server
+RUN pnpm --filter @app-starter/server deploy --prod /prod/server
 
 FROM ${NODE_IMAGE} AS runtime
 
@@ -31,12 +31,12 @@ ENV API_HOST=0.0.0.0
 ENV API_PORT=8090
 
 WORKDIR /app
-RUN addgroup -S lingcoo && adduser -S lingcoo -G lingcoo
+RUN addgroup -S app && adduser -S app -G app
 
-COPY --from=build --chown=lingcoo:lingcoo /prod/server ./server
-COPY --from=build --chown=lingcoo:lingcoo /app/admin/dist ./admin/dist
-COPY --from=build --chown=lingcoo:lingcoo /app/web/dist ./web/dist
+COPY --from=build --chown=app:app /prod/server ./server
+COPY --from=build --chown=app:app /app/admin/dist ./admin/dist
+COPY --from=build --chown=app:app /app/web/dist ./web/dist
 
-USER lingcoo
+USER app
 EXPOSE 8090
 CMD ["node", "server/dist/main.js"]
