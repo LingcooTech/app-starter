@@ -27,6 +27,24 @@ Developer GitHub repository
 4. 启动 API、Worker 和 Caddy；
 5. 等待健康检查并执行冒烟验证。
 
+## Prepare a container registry first
+
+ACR is an independent Alibaba Cloud resource. It does not appear automatically when a GitHub repository is created. Before configuring GitHub Actions, the developer must prepare a registry that GitHub Actions can push to and the production server can pull from.
+
+1. Create or select an Alibaba Cloud account and region.
+2. Activate an ACR Personal Edition or Enterprise Edition instance according to the application's scale, network, and availability requirements.
+3. Create a namespace, for example `my-team`.
+4. Create an image repository, for example `my-business-app`, or enable the instance's approved automatic repository creation policy.
+5. Configure Internet/VPC access control so GitHub-hosted runners and the production server can reach the registry.
+6. Create a dedicated RAM user or ACR access credential with only the required repository push/pull permissions.
+7. Set an ACR login password and verify the login from a trusted machine:
+
+```bash
+docker login <registry-host> --username <acr-username>
+```
+
+Record the registry host, namespace, username, and password in a password manager. Only after these steps should the values be copied into the GitHub Actions Secrets described below. Alibaba Cloud recommends separate ACR credentials rather than reusing the console login password. See the [ACR access credential guide](https://www.alibabacloud.com/help/en/acr/user-guide/configure-access-credentials) and [namespace guide](https://www.alibabacloud.com/help/en/acr/user-guide/manage-namespaces).
+
 ## Enable deployment
 
 模板仓库的 Deploy workflow 默认关闭。开发者复制模板后，在自己的仓库配置：
