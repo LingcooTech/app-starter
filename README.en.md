@@ -159,7 +159,7 @@ When using the web template flow, go directly into the new repository. Do not ru
 
 After the package is published, use the following command to create an independent project:
 
-    npx create-ts-app-starter@latest my-app
+    npx @lingcoo-tech/create-ts-app-starter@latest my-app
     cd my-app
 
 The CLI downloads the template, replaces the project name, removes the original Git history, initializes a new Git repository, and installs dependencies according to the selected options.

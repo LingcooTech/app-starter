@@ -1,9 +1,9 @@
 # Project Generator
 
-`create-ts-app-starter` is the recommended way to create an independent application from this starter. The package source is included in this repository and is published separately from the template repository.
+`@lingcoo-tech/create-ts-app-starter` is the recommended way to create an independent application from this starter. The package source is included in this repository and is published separately from the template repository.
 
 ```bash
-npx create-ts-app-starter@latest my-app
+npx @lingcoo-tech/create-ts-app-starter@latest my-app
 cd my-app
 cp .env.example .env
 pnpm dev
@@ -14,11 +14,11 @@ The generator downloads the selected starter revision, removes the template's Gi
 ## Options
 
 ```bash
-npx create-ts-app-starter@latest my-app --package-manager npm
-npx create-ts-app-starter@latest my-app --skip-install
-npx create-ts-app-starter@latest my-app --no-git
-npx create-ts-app-starter@latest my-app --example minimal
-npx create-ts-app-starter@latest my-app --ref main
+npx @lingcoo-tech/create-ts-app-starter@latest my-app --package-manager npm
+npx @lingcoo-tech/create-ts-app-starter@latest my-app --skip-install
+npx @lingcoo-tech/create-ts-app-starter@latest my-app --no-git
+npx @lingcoo-tech/create-ts-app-starter@latest my-app --example minimal
+npx @lingcoo-tech/create-ts-app-starter@latest my-app --ref main
 ```
 
 The `minimal` example is currently the only supported example. Additional examples will be added as independently verifiable application variants; they will not contain Lingcoo production credentials, domains, or deployment parameters.

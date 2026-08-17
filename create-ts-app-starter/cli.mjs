@@ -32,7 +32,7 @@ const TEXT_EXTENSIONS = new Set([
 function usage() {
   console.log(`
 Usage:
-  npx create-ts-app-starter@latest <directory> [options]
+  npx @lingcoo-tech/create-ts-app-starter@latest <directory> [options]
 
 Options:
   --example <name>          Template example (currently: minimal)

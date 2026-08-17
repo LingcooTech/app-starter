@@ -159,7 +159,7 @@ Admin 和 Web 是默认的两个前端入口；实际业务也可以由小程序
 
 CLI 包发布后，使用以下命令创建独立项目：
 
-    npx create-ts-app-starter@latest my-app
+    npx @lingcoo-tech/create-ts-app-starter@latest my-app
     cd my-app
 
 CLI 会下载模板、替换项目名称、删除原 Git 历史、初始化新 Git 仓库，并按选项安装依赖。
