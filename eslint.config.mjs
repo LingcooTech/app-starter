@@ -15,6 +15,12 @@ export default tseslint.config(
     },
   },
   {
+    files: ['create-ts-app-starter/**/*.mjs'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
     files: ['admin/**/*.{ts,tsx}', 'web/**/*.{ts,tsx}'],
     languageOptions: {
       globals: globals.browser,
