@@ -46,19 +46,19 @@ TS App Starter 把这些基础工作预先完成。新项目可以直接建立�
 
 TS App Starter 重点解决的是选型、组合、规范和工程化：HTTP、后端模块、数据库、前端、容器和 CI/CD 分别交给成熟技术负责，再把它们组织成一套完整应用。
 
-| 层级 | 技术 | 主要作用 |
-| --- | --- | --- |
-| 语言 | TypeScript | 统一前后端开发语言和类型系统 |
-| 运行环境 | Node.js | 运行 API、Worker 和服务端工具 |
-| 后端架构 | NestJS | 组织模块、依赖、业务代码和测试 |
-| HTTP | Fastify | 处理 HTTP 请求和响应 |
-| 数据库 | PostgreSQL | 保存核心业务数据 |
-| 数据访问 | Drizzle ORM | 以 TypeScript 管理数据库访问和 Schema |
-| 数据校验 | Zod / JSON Schema | 校验配置和接口数据 |
-| 前端 | React + Vite / Next.js | 构建管理后台和 Web 用户端 |
-| Workspace | pnpm | 管理依赖和多工程 Workspace |
-| 应用交付 | Docker | 构建可重复部署的运行镜像 |
-| CI/CD | GitHub Actions | 自动检查、测试、构建和发布 |
+| 层级      | 技术                   | 主要作用                              |
+| --------- | ---------------------- | ------------------------------------- |
+| 语言      | TypeScript             | 统一前后端开发语言和类型系统          |
+| 运行环境  | Node.js                | 运行 API、Worker 和服务端工具         |
+| 后端架构  | NestJS                 | 组织模块、依赖、业务代码和测试        |
+| HTTP      | Fastify                | 处理 HTTP 请求和响应                  |
+| 数据库    | PostgreSQL             | 保存核心业务数据                      |
+| 数据访问  | Drizzle ORM            | 以 TypeScript 管理数据库访问和 Schema |
+| 数据校验  | Zod / JSON Schema      | 校验配置和接口数据                    |
+| 前端      | React + Vite / Next.js | 构建管理后台和 Web 用户端             |
+| Workspace | pnpm                   | 管理依赖和多工程 Workspace            |
+| 应用交付  | Docker                 | 构建可重复部署的运行镜像              |
+| CI/CD     | GitHub Actions         | 自动检查、测试、构建和发布            |
 
 ### 成熟的应用架构
 
@@ -155,9 +155,9 @@ Admin 和 Web 是默认的两个前端入口；实际业务也可以由小程序
 
 如果使用网页模板创建，直接进入新仓库即可，不需要执行 rm -rf .git。不要把模板仓库当作业务项目直接开发。
 
-### 方式 B：CLI（npm 包发布后推荐）
+### 方式 B：CLI（推荐）
 
-由于 create-ts-app-starter 的 npm 组织名称正在等待释放，CLI 将在 npm 发布后作为推荐入口：
+CLI 包发布后，使用以下命令创建独立项目：
 
     npx create-ts-app-starter@latest my-app
     cd my-app
@@ -244,15 +244,15 @@ CLI 会下载模板、替换项目名称、删除原 Git 历史、初始化新 G
 
 基础保持简单，能力按需要增加。
 
-| 需求 | 建议扩展 |
-| --- | --- |
-| 异步任务增多 | Worker / BullMQ |
-| 需要缓存或队列 | Redis |
-| 文件和图片 | S3 / OSS / COS 等对象存储 |
-| 邮件和通知 | Email / SMS / Push 服务 |
-| 在线支付 | 支付服务 SDK |
-| 监控与追踪 | OpenTelemetry / Logs / Metrics |
-| 独立扩缩容需求 | 拆分为独立 Service |
+| 需求           | 建议扩展                       |
+| -------------- | ------------------------------ |
+| 异步任务增多   | Worker / BullMQ                |
+| 需要缓存或队列 | Redis                          |
+| 文件和图片     | S3 / OSS / COS 等对象存储      |
+| 邮件和通知     | Email / SMS / Push 服务        |
+| 在线支付       | 支付服务 SDK                   |
+| 监控与追踪     | OpenTelemetry / Logs / Metrics |
+| 独立扩缩容需求 | 拆分为独立 Service             |
 
 这些能力不是 Starter 的强制依赖，只有业务真正需要时再加入。
 

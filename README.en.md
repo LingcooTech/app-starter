@@ -46,19 +46,19 @@ Business applications are built on a mainstream, mature TypeScript web ecosystem
 
 TS App Starter focuses on selection, composition, conventions, and engineering: mature technologies handle HTTP, backend modules, databases, frontend applications, containers, and CI/CD, while the starter organizes them into one coherent application.
 
-| Layer | Technology | Main responsibility |
-| --- | --- | --- |
-| Language | TypeScript | One language and type system across frontend and backend |
-| Runtime | Node.js | Runs the API, Worker, and server-side tools |
-| Backend architecture | NestJS | Organizes modules, dependencies, business code, and tests |
-| HTTP | Fastify | Handles HTTP requests and responses |
-| Database | PostgreSQL | Stores core business data |
-| Data access | Drizzle ORM | Manages database access and schemas with TypeScript |
-| Validation | Zod / JSON Schema | Validates configuration and API data |
-| Frontend | React + Vite / Next.js | Builds administration and user-facing applications |
-| Workspace | pnpm | Manages dependencies and the multi-project workspace |
-| Delivery | Docker | Builds reproducible runtime images |
-| CI/CD | GitHub Actions | Automates checks, tests, builds, and publishing |
+| Layer                | Technology             | Main responsibility                                       |
+| -------------------- | ---------------------- | --------------------------------------------------------- |
+| Language             | TypeScript             | One language and type system across frontend and backend  |
+| Runtime              | Node.js                | Runs the API, Worker, and server-side tools               |
+| Backend architecture | NestJS                 | Organizes modules, dependencies, business code, and tests |
+| HTTP                 | Fastify                | Handles HTTP requests and responses                       |
+| Database             | PostgreSQL             | Stores core business data                                 |
+| Data access          | Drizzle ORM            | Manages database access and schemas with TypeScript       |
+| Validation           | Zod / JSON Schema      | Validates configuration and API data                      |
+| Frontend             | React + Vite / Next.js | Builds administration and user-facing applications        |
+| Workspace            | pnpm                   | Manages dependencies and the multi-project workspace      |
+| Delivery             | Docker                 | Builds reproducible runtime images                        |
+| CI/CD                | GitHub Actions         | Automates checks, tests, builds, and publishing           |
 
 ### A proven application architecture
 
@@ -155,9 +155,9 @@ The repository is now enabled as a GitHub Template Repository. Open the reposito
 
 When using the web template flow, go directly into the new repository. Do not run rm -rf .git; the template already creates an independent repository. Do not develop business features directly in the template repository.
 
-### Option B: CLI (recommended after npm publication)
+### Option B: CLI (recommended)
 
-The create-ts-app-starter npm organization is currently waiting for the name to be released. After the package is published, the recommended flow will be:
+After the package is published, use the following command to create an independent project:
 
     npx create-ts-app-starter@latest my-app
     cd my-app
@@ -244,15 +244,15 @@ The deployment process runs database migrations according to project configurati
 
 Keep the foundation simple and add capabilities when the business needs them:
 
-| Need | Suggested extension |
-| --- | --- |
-| More asynchronous work | Worker / BullMQ |
-| Caching or queues | Redis |
-| Files and images | S3 / OSS / COS or another object store |
-| Email and notifications | Email / SMS / Push provider |
-| Online payments | Payment provider SDK |
-| Observability and tracing | OpenTelemetry / Logs / Metrics |
-| Independent scaling | Split into an independent Service |
+| Need                      | Suggested extension                    |
+| ------------------------- | -------------------------------------- |
+| More asynchronous work    | Worker / BullMQ                        |
+| Caching or queues         | Redis                                  |
+| Files and images          | S3 / OSS / COS or another object store |
+| Email and notifications   | Email / SMS / Push provider            |
+| Online payments           | Payment provider SDK                   |
+| Observability and tracing | OpenTelemetry / Logs / Metrics         |
+| Independent scaling       | Split into an independent Service      |
 
 These capabilities are not mandatory dependencies. Add them only when the business actually needs them.
 
