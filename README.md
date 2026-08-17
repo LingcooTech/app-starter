@@ -149,13 +149,7 @@ Admin 和 Web 是默认的两个前端入口；实际业务也可以由小程序
 
 ## 7. 如何使用它开发一个新应用？
 
-### 方式 A：GitHub Template（当前可用）
-
-仓库已经开启 GitHub Template Repository。打开仓库主页，点击 **Use this template**，创建自己的新仓库。模板创建的是独立仓库，不会继承 Starter 的提交历史。
-
-如果使用网页模板创建，直接进入新仓库即可，不需要执行 rm -rf .git。不要把模板仓库当作业务项目直接开发。
-
-### 方式 B：CLI（推荐）
+### 使用 CLI 创建项目（唯一推荐入口）
 
 CLI 包发布后，使用以下命令创建独立项目：
 
@@ -163,6 +157,8 @@ CLI 包发布后，使用以下命令创建独立项目：
     cd my-app
 
 CLI 会下载模板、替换项目名称、删除原 Git 历史、初始化新 Git 仓库，并按选项安装依赖。
+
+从创建项目到本地开发、服务器部署或 Vercel 前端部署的完整流程，见 [从 Starter 到生产应用](docs/getting-started.md)。
 
 ### 第 1 步：安装依赖并配置环境
 
@@ -200,7 +196,7 @@ CLI 会下载模板、替换项目名称、删除原 Git 历史、初始化新 G
 
 ### 第 5 步：创建自己的 GitHub 仓库并推送
 
-如果使用 GitHub Template 或 CLI，项目已经是独立 Git 仓库。创建一个自己的 GitHub 空仓库后执行：
+CLI 创建的项目已经是独立 Git 仓库。创建一个自己的 GitHub 空仓库后执行：
 
     git remote add origin git@github.com:<your-account>/<your-repository>.git
     git add .

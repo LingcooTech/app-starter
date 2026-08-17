@@ -149,13 +149,7 @@ Add new business capabilities as NestJS Modules in server first instead of extra
 
 ## 7. How to build a new application with it
 
-### Option A: GitHub Template (available now)
-
-The repository is now enabled as a GitHub Template Repository. Open the repository page, click **Use this template**, and create your own repository. A template-created repository has independent history and does not inherit the Starter's commits.
-
-When using the web template flow, go directly into the new repository. Do not run rm -rf .git; the template already creates an independent repository. Do not develop business features directly in the template repository.
-
-### Option B: CLI (recommended)
+### Create a project with the CLI (the only recommended entry point)
 
 After the package is published, use the following command to create an independent project:
 
@@ -163,6 +157,8 @@ After the package is published, use the following command to create an independe
     cd my-app
 
 The CLI downloads the template, replaces the project name, removes the original Git history, initializes a new Git repository, and installs dependencies according to the selected options.
+
+See [从 Starter 到生产应用](docs/getting-started.md) for the complete flow from project creation to local development, self-hosted deployment, or Vercel frontend deployment.
 
 ### Step 1: Install dependencies and configure the environment
 
@@ -200,7 +196,7 @@ Add backend capabilities as business modules, add administration pages to Admin,
 
 ### Step 5: Create and push your GitHub repository
 
-When using the GitHub Template or CLI, the project already has an independent Git repository. Create an empty repository under your own account and run:
+The CLI-created project already has an independent Git repository. Create an empty repository under your own account and run:
 
     git remote add origin git@github.com:<your-account>/<your-repository>.git
     git add .
