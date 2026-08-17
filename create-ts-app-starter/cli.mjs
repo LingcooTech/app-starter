@@ -11,6 +11,7 @@ import { Readable } from 'node:stream';
 const DEFAULT_REPOSITORY = 'LingcooTech/ts-app-starter';
 const DOWNLOAD_TIMEOUT_MS = 30_000;
 const DOWNLOAD_ATTEMPTS = 3;
+const TEXT_FILE_NAMES = new Set(['Dockerfile']);
 const TEXT_EXTENSIONS = new Set([
   '.md',
   '.json',
@@ -141,23 +142,29 @@ async function copyTemplate(source, target) {
   await rm(join(target, 'node_modules'), { recursive: true, force: true });
 }
 
-async function transformFiles(root) {
+async function transformFiles(root, projectName) {
   const entries = await readdir(root, { withFileTypes: true });
   for (const entry of entries) {
     if (['.git', 'node_modules', '.next', 'dist'].includes(entry.name)) continue;
     const path = join(root, entry.name);
     if (entry.isDirectory()) {
-      await transformFiles(path);
+      await transformFiles(path, projectName);
       continue;
     }
     const extension = entry.name.includes('.') ? `.${entry.name.split('.').pop()}` : '';
-    if (!TEXT_EXTENSIONS.has(extension) && !entry.name.startsWith('.env')) continue;
+    if (
+      !TEXT_FILE_NAMES.has(entry.name) &&
+      !TEXT_EXTENSIONS.has(extension) &&
+      !entry.name.startsWith('.env')
+    )
+      continue;
     const content = await readFile(path, 'utf8');
-    await writeFile(
-      path,
-      content.replaceAll('@ts-app-starter', '@my-app').replaceAll('ts-app-starter', basename(root)),
-      'utf8',
-    );
+    const protectedGeneratorName = '__CREATE_TS_APP_STARTER__';
+    const transformed = content
+      .replaceAll('create-ts-app-starter', protectedGeneratorName)
+      .replaceAll('ts-app-starter', projectName)
+      .replaceAll(protectedGeneratorName, 'create-ts-app-starter');
+    await writeFile(path, transformed, 'utf8');
   }
 }
 
@@ -179,7 +186,7 @@ async function main() {
     console.log(`Creating a TypeScript application in ${target}`);
     const source = await downloadTemplate(workdir, parsed.options.ref);
     await copyTemplate(source, target);
-    await transformFiles(target);
+    await transformFiles(target, basename(target));
     if (parsed.options.git) {
       execFileSync('git', ['init', '-b', 'main'], { cwd: target, stdio: 'ignore' });
       execFileSync('git', ['add', '.'], { cwd: target });

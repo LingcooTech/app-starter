@@ -1,6 +1,6 @@
 {
   "name": "@lingcoo-tech/create-ts-app-starter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Create a production-ready TypeScript application from the ts-app-starter template.",
   "license": "Apache-2.0",
   "type": "module",
