@@ -4,6 +4,8 @@
 
 语言 / Language: 中文 · [English](README.en.md)
 
+Starter 的版本只代表创建基线。应用创建后独立维护；需要吸收后续基础设施改进时，请参阅[升级指南](docs/upgrading.md)。
+
 ## 1. 项目定位
 
 Node.js + TypeScript 是当前主流 Web 和业务应用开发中成熟、现代且广泛采用的技术组合之一。只要应用的核心业务是“接收请求 → 处理业务逻辑 → 查询数据库或外部 API → 返回结果”，Node.js + TypeScript 通常都是非常合适的技术路线。

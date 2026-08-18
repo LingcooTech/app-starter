@@ -64,7 +64,7 @@ docker/       Caddy 等部署配置
 
 ## 8. 第六阶段：切换与产品化
 
-完成 OpenAPI 契约对比、数据迁移演练、备份恢复、安全和性能验收、ACR 推送、Core Stack 部署，并通过一个真实行业应用验证 Starter。Starter 可以成为 GitHub Template，但不重新发展为共享 Runtime。
+完成 OpenAPI 契约对比、数据迁移演练、备份恢复、安全和性能验收、镜像仓库推送、Core Stack 部署，并通过一个真实应用验证 Starter。Starter 只通过 CLI 作为创建基线，不重新发展为共享 Runtime。
 
 ## 9. 模块迁移方法
 

@@ -4,6 +4,8 @@ A production-ready starting point for building, shipping, and deploying complete
 
 Language: [中文](README.md) · English
 
+Starter versions identify the creation baseline only. After creation, each application evolves independently; see the [upgrade guide](docs/upgrading.md) when you want to adopt later foundation changes.
+
 ## 1. Positioning
 
 Node.js + TypeScript remains one of the most modern, mature, and widely adopted combinations for web and business application development. Whenever the core business flow is “receive a request → process business logic → query a database or external API → return a result,” Node.js + TypeScript is usually a strong technology choice.
